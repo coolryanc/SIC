@@ -6,47 +6,10 @@ from pyEMS import openEMSstim
 from pyEMS.EMSCommand import ems_command
 from pyEMS import openEMSstim
 from random import randint 
-import SocketServer
-import threading
 
 
 
 my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
-
-class MyTCPHandler(SocketServer.BaseRequestHandler):
-    def __init__(self,  *args):
-        self.i1 = args[1]
-        self.i2 = args[2]
-        self.mode = args[3]
-        print self.i1
-        print self.i2
-        print self.mode
-
-
-    def handle(self):        
-        print self.client_address[0]+"connect"
-        app = QApplication([])
-        window = MainWindow()
-        window.show()
-        app.exec_()
-    def send(self):
-        msgtorasp="i1="+str(self.i1)+" i2="+str(self.i2)+" mode="+str(self.mode)
-        self.request.sendall(msgtorasp)
-    def recv(self):
-        t1 = threading.Thread(target=self.wait_recv, args=[])
-        t1.start()
-    def wait_recv(self):
-        while True:
-            message=int(self.request.recv(1024).strip())
-            print message
-            break 
-        if message == 1:
-            self.changeGif("photo/leftattack.gif")
-        elif message == 2:
-            self.changeGif("photo/rightattack.gif")
-        else:
-            self.changeGif("photo/peace.gif")
-
 """
 class GifImage(QLabel):
     def __init__(self, *args):
@@ -165,13 +128,18 @@ class MainWindow(QStackedWidget):
         print mode
         print self.idensity1
         print self.idensity2
-        SendTCP = MyTCPHandler(None, self.idensity1, self.idensity2, mode)
-        SendTCP.send()
-
         pic.hide()
         global window2
         window2 = QWidget()
         window2.setStyleSheet("background-color:white")
+
+        global roundlabel
+        roundlabel = QLabel("")
+        roundlabel.setFont(QFont("SWLINK",90,QFont.Bold))
+
+        til = QHBoxLayout()
+        til.addWidget(roundlabel, 0, Qt.AlignCenter)
+
 
 
 
@@ -183,28 +151,82 @@ class MainWindow(QStackedWidget):
         pp.setMovie(movie)
         movie.start()
 
+        global bloodleft
+        global bloodright
+        bloodleft = QLabel()
+        bloodright = QLabel()
+        global leftmovie
+        global rightmovie
+        leftmovie = QMovie("photo/full.gif")
+        bloodleft.setMovie(leftmovie)
+        rightmovie = QMovie("photo/full.gif")
+        bloodright.setMovie(rightmovie)
+        leftmovie.start()
+        leftmovie.stop()
+        rightmovie.start()
+        rightmovie.stop()
+
+        ho = QHBoxLayout()
+        ho.addWidget(bloodleft, 0, Qt.AlignCenter)
+        ho.addWidget(bloodright, 0, Qt.AlignCenter)  
+
+
 
         layout = QVBoxLayout()
+        layout.addStretch()
+        layout.addLayout(til)
+        layout.addStretch()
+        layout.addLayout(ho)
         layout.addWidget(pp, 0, Qt.AlignCenter)
+        layout.addStretch()
         window2.setLayout(layout)
         
         self.addWidget(window2)
         self.setCurrentWidget(window2)
 
         self.timer = QTimer()
-              
+        self.timer.singleShot(3000, lambda: self.life("ROUND1"))     
         self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
-        """
-        self.timer.singleShot(10000, lambda: self.changeGif("photo/R2.gif")) 
+        self.timer.singleShot(9000, lambda: self.life(""))    
+        self.timer.singleShot(9000, lambda: self.changeGif(movie,"photo/R2.gif")) 
+        self.timer.singleShot(12000, lambda: self.life("ROUND2"))   
         self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
-        self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
-        self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        """
+        # self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
+        # self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
 
         self.timer.singleShot(30000, lambda: self.finishPage(mode))
+
+
+    def life(self, te):
+        roundlabel.setText(te)
+
+
+    def changeGif(self, mov, gifname):
+        mov.stop()
+        print mov
+        mov = QMovie(gifname)
+        pp.setMovie(mov)
+        mov.start()
+
+    def play(self, mov):
+        #print mov
+        mov.start()
+    def stop(self, mov):
+        mov.stop()
+
+    def changebloodGif(self, side, mov, gifname): 
+        #mov.stop()     
+        mov.setFileName(gifname)
+        side.setMovie(mov)
+        mov.start()
+        mov.stop()
+
+        
+ 
 
 
     def EMS(self, i1, i2, mode):
@@ -243,17 +265,23 @@ class MainWindow(QStackedWidget):
                     #self.changeGif()
         
 
-        
-        
+        self.timer = QTimer()
+        and_number = randint(1, 2)
+        if and_number == 1:
+            self.changeGif(movie,"photo/leftattack.gif")            
+            self.timer.singleShot(1600, lambda: self.play(rightmovie))
+            self.timer.singleShot(2600, lambda: self.changebloodGif(bloodright, rightmovie,"photo/full_1.gif"))
+            
 
-        
-    def changeGif(self, gifname):
-        global movie
-        movie.stop()
-        movie = QMovie(gifname)
-        pp.setMovie(movie)
-        movie.start()
-        
+        elif and_number == 2:
+            self.changeGif(movie,"photo/rightattack.gif")
+            self.timer = QTimer()
+            self.timer.singleShot(1600, lambda: self.play(leftmovie))
+            self.timer.singleShot(2600, lambda: self.changebloodGif(bloodleft, leftmovie,"photo/full_1.gif")) 
+            
+        else:
+            self.changeGif(movie,"photo/peace.gif")
+
         
 
 
@@ -444,13 +472,12 @@ class MainWindow(QStackedWidget):
 
 
  
-
 if __name__ == '__main__':
-    HOST, PORT = "10.0.1.31", 4001
+    app = QApplication([])
+    window = MainWindow()
+    window.show()
+    app.exec_()
 
-    # Create the server, binding to localhost on port 9999
-    server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)
-    server.serve_forever()
 
 
 
