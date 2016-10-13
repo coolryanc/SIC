@@ -6,11 +6,48 @@ from pyEMS import openEMSstim
 from pyEMS.EMSCommand import ems_command
 from pyEMS import openEMSstim
 from random import randint 
-sys.path.append("../Leapmotion-GesturePredicted")
-import Sample
+
+
 
 my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
 
+class GifImage(QLabel):
+    def __init__(self, *args): #gifname time life
+        super(GifImage, self).__init__()
+        print args[1]
+        self.movie = QMovie(args[1])
+        self.setMovie(self.movie)
+        self.movie.start()
+        self.movie.stop()
+    
+        self.timedelay = int(args[2])
+        self.life = args[3]
+
+  
+    def start(self):
+        self.movie.start() 
+    def playAN(self,nowlife):
+        self.life = nowlife
+        self.timer = QTimer()
+        self.timer.singleShot(self.timedelay,self.start)
+        self.timer.singleShot(self.timedelay+1000,self.cc)
+
+    def cc(self):
+        if self.life == 2:
+            self.movie.setFileName("photo/full_1.gif")
+        elif self.life == 1:
+            self.movie.setFileName("photo/full_2.gif")
+        self.setMovie(self.movie)
+        self.movie.start()
+        self.movie.stop()
+    def reset(self):
+        self.movie.setFileName("photo/full.gif")
+        self.setMovie(self.movie)
+        self.movie.start()
+        self.movie.stop()
+
+
+    
 
 class HoverButton(QPushButton):
 
@@ -60,6 +97,9 @@ class MainWindow(QStackedWidget):
         self.idensity1 = 10
         global idensity2
         self.idensity2 = 10
+
+    
+
         pic = QLabel(self)
         pic.setScaledContents(True)
         pic.setGeometry(0,0,1440,1000)
@@ -113,9 +153,17 @@ class MainWindow(QStackedWidget):
         window2 = QWidget()
         window2.setStyleSheet("background-color:white")
 
+        global leftlife
+        leftlife = 3
+        global rightlife
+        rightlife = 3
 
+        global roundlabel
+        roundlabel = QLabel("")
+        roundlabel.setFont(QFont("SWLINK",90,QFont.Bold))
+        til = QHBoxLayout()
+        til.addWidget(roundlabel, 0, Qt.AlignCenter)
 
-  
         global pp
         pp = QLabel()
         global movie 
@@ -123,35 +171,68 @@ class MainWindow(QStackedWidget):
         pp.setMovie(movie)
         movie.start()
 
+        global bloodleft
+        global bloodright
+        bloodleft = GifImage(window2, "photo/full.gif",1600,2)
+        bloodright = GifImage(window2, "photo/full.gif",1600,3)
+       
         
+
+        ho = QHBoxLayout()
+        ho.addWidget(bloodleft, 0, Qt.AlignCenter)
+        ho.addWidget(bloodright, 0, Qt.AlignCenter)  
+
+
+
         layout = QVBoxLayout()
+        layout.addStretch()
+        layout.addLayout(til)
+        layout.addStretch()
+        layout.addLayout(ho)
         layout.addWidget(pp, 0, Qt.AlignCenter)
+        layout.addStretch()
         window2.setLayout(layout)
         
         self.addWidget(window2)
         self.setCurrentWidget(window2)
-
         self.timer = QTimer()
-        
+        self.timer.singleShot(3000, lambda: self.Roundnumber("ROUND1"))     
         self.timer.singleShot(5500, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(6000, lambda: self.Result(righthand_number))
+        # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
-        self.timer.singleShot(10000, lambda: self.changeGif("photo/R2.gif")) 
-        self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(9000, lambda: self.Roundnumber(""))    
+        self.timer.singleShot(9000, lambda: self.changeGif(movie,"photo/R2.gif")) 
+        self.timer.singleShot(12000, lambda: self.Roundnumber("ROUND2"))   
+        self.timer.singleShot(14500, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
-        self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
-        self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
+        #self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        
+        self.timer.singleShot(18000, lambda: self.Roundnumber(""))    
+        self.timer.singleShot(18000, lambda: self.changeGif(movie,"photo/R3.gif")) 
+        self.timer.singleShot(21000, lambda: self.Roundnumber("ROUND3"))   
+        self.timer.singleShot(23500, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
 
         self.timer.singleShot(30000, lambda: self.finishPage(mode))
 
 
+    def Roundnumber(self, te):
+        roundlabel.setText(te)
+
+
+    def changeGif(self, mov, gifname):
+        mov.stop()
+        mov = QMovie(gifname)
+        pp.setMovie(mov)
+        mov.start()
+ 
     def EMS(self, i1, i2, mode):
         print mode
         print "ems",
         print i1, i2
-        global righthand_number
         righthand_number = randint(1, 3)
+        lefthand_number = randint(1, 3)
         #lefthand_number = readbyleamotion	
         if mode == 1: #easy mode
             if righthand_number == 1:
@@ -174,36 +255,27 @@ class MainWindow(QStackedWidget):
                 if righthand_number==2:#ems:rock
                     my_ems_board.send(ems_command(1,i1,1000))
                     my_ems_board.send(ems_command(2,i1,1000))
+        timer = QTimer()
+        timer.singleShot(500, lambda: self.Result(righthand_number))
         
 	#show result        
     def Result(self,right):
         print right
+        left = randint(1, 3)
         #left read by leamotion
         result=right-left
 	if result==0:#peace
-            self.changeGif("photo/peace.gif")
+            self.changeGif(movie,"photo/peace.gif")
 	elif result==1 or result==-2:#ems win
-            self.changeGif("photo/rightattack.gif")
+            self.changeGif(movie,"photo/rightattack.gif")
+            global leftlife
+            bloodleft.playAN(leftlife-1) 
+            leftlife -=1
 	else:
-            self.changeGif("photo/leftattack.gif")
-        
-#        and_number = randint(1, 3)
-#        if and_number == 1:
-#            self.changeGif("photo/leftattack.gif")
-#        elif and_number == 2:
-#            self.changeGif("photo/rightattack.gif")
-#        else:
-#            self.changeGif("photo/peace.gif")
-
-        
-    def changeGif(self, gifname):
-        global movie
-        movie.stop()
-        movie = QMovie(gifname)
-        pp.setMovie(movie)
-        movie.start()
-        
-        
+            self.changeGif(movie,"photo/leftattack.gif") 
+            global rightlife
+            bloodright.playAN(rightlife-1)  
+            rightlife -=1        
 
 
     def finishPage(self, mode):
@@ -256,14 +328,28 @@ class MainWindow(QStackedWidget):
         pp.setMovie(movie)
         movie.start()
 
+        bloodleft.reset()
+        bloodright.reset()
+
+
+
         self.timer = QTimer()
               
+        self.timer.singleShot(3000, lambda: self.Roundnumber("ROUND1"))     
         self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
-        self.timer.singleShot(10000, lambda: self.changeGif("photo/R2.gif")) 
+        self.timer.singleShot(9000, lambda: self.Roundnumber(""))    
+        self.timer.singleShot(9000, lambda: self.changeGif(movie,"photo/R2.gif")) 
+        self.timer.singleShot(12000, lambda: self.Roundnumber("ROUND2"))   
         self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
-        self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
+        #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
+        #self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        
+        self.timer.singleShot(18000, lambda: self.Roundnumber(""))    
+        self.timer.singleShot(18000, lambda: self.changeGif(movie,"photo/R3.gif")) 
+        self.timer.singleShot(21000, lambda: self.Roundnumber("ROUND3"))   
         self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
 

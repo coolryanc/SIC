@@ -195,16 +195,15 @@ class MainWindow(QStackedWidget):
         
         self.addWidget(window2)
         self.setCurrentWidget(window2)
-
         self.timer = QTimer()
         self.timer.singleShot(3000, lambda: self.Roundnumber("ROUND1"))     
-        self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(5500, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
         self.timer.singleShot(9000, lambda: self.Roundnumber(""))    
         self.timer.singleShot(9000, lambda: self.changeGif(movie,"photo/R2.gif")) 
         self.timer.singleShot(12000, lambda: self.Roundnumber("ROUND2"))   
-        self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(14500, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
         #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
         #self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
@@ -212,7 +211,7 @@ class MainWindow(QStackedWidget):
         self.timer.singleShot(18000, lambda: self.Roundnumber(""))    
         self.timer.singleShot(18000, lambda: self.changeGif(movie,"photo/R3.gif")) 
         self.timer.singleShot(21000, lambda: self.Roundnumber("ROUND3"))   
-        self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(23500, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
 
         self.timer.singleShot(30000, lambda: self.finishPage(mode))
@@ -227,63 +226,56 @@ class MainWindow(QStackedWidget):
         mov = QMovie(gifname)
         pp.setMovie(mov)
         mov.start()
-        
  
     def EMS(self, i1, i2, mode):
         print mode
         print "ems",
         print i1, i2
+        righthand_number = randint(1, 3)
+        lefthand_number = randint(1, 3)
+        #lefthand_number = readbyleamotion	
         if mode == 1: #easy mode
-            rand_number = randint(1, 3)
-            if rand_number == 1:
+            if righthand_number == 1:
                 print "scissor",
                 print i1
                 my_ems_board.send(ems_command(1,i2,1000))
-            elif rand_number ==2:
+            elif righthand_number ==2:
                 print "rock",
                 print i2
                 my_ems_board.send(ems_command(1,i1,1000))
                 my_ems_board.send(ems_command(2,i1,1000))
             else:
                 pass 
-            # player hand?
-                #if player win:
-                    #self.changeGif()
-                #elif player lose:
-                    #self.changeGif()
-                #else:
-                    #self.changeGif()
-                       
         elif mode == 2: #pi camera  hard mode
-            pass
-            # player hand?
-                #if player win:
-                    #self.changeGif()
-                #elif player lose:
-                    #self.changeGif()
-                #else:
-                    #self.changeGif()
+            if lefthand_number==3:#left is paper=>ems:scissor
+                righthand_number=1
+                my_ems_board.send(ems_command(1,i2,1000))
+            else:#o.w
+                righthand_number=lefthand_number+1
+                if righthand_number==2:#ems:rock
+                    my_ems_board.send(ems_command(1,i1,1000))
+                    my_ems_board.send(ems_command(2,i1,1000))
+        timer = QTimer()
+        timer.singleShot(500, lambda: self.Result(righthand_number))
         
-
-        
-        and_number = randint(1, 3)
-        if and_number == 1:
-            self.changeGif(movie,"photo/leftattack.gif") 
-            global rightlife
-            bloodright.playAN(rightlife-1)  
-            rightlife -=1        
-                      
-
-        elif and_number == 2:
+	#show result        
+    def Result(self,right):
+        print right
+        left = randint(1, 3)
+        #left read by leamotion
+        result=right-left
+	if result==0:#peace
+            self.changeGif(movie,"photo/peace.gif")
+	elif result==1 or result==-2:#ems win
             self.changeGif(movie,"photo/rightattack.gif")
             global leftlife
             bloodleft.playAN(leftlife-1) 
             leftlife -=1
-      
-        else:
-            self.changeGif(movie,"photo/peace.gif")
-
-        
+	else:
+            self.changeGif(movie,"photo/leftattack.gif") 
+            global rightlife
+            bloodright.playAN(rightlife-1)  
+            rightlife -=1        
 
 
     def finishPage(self, mode):
