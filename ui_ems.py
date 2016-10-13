@@ -10,6 +10,7 @@ from random import randint
 
 
 my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
+
 """
 class GifImage(QLabel):
     def __init__(self, *args):
