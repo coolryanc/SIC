@@ -11,27 +11,6 @@ from random import randint
 
 my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
 
-"""
-class GifImage(QLabel):
-    def __init__(self, *args):
-        super(GifImage, self).__init__()
-        print args[1]
-        global movie 
-        stop()
-        #self.setVisibleself.movie = QMovie(args[1])
-        self.setMovie(self.movie)
-        self.movie.start()
-        #self.movie.(False)
-        self.timer = QTimer()
-        self.timer.singleShot(int(args[2]),self.clockdown)
-
-    
-    def clockdown(self):
-        self.movie.stop()
-        self.movie = QMovie("photo/leftattack.gif")
-        self.setMovie(self.movie)
-        self.movie.start()
- """       
 
 class HoverButton(QPushButton):
 
@@ -144,7 +123,7 @@ class MainWindow(QStackedWidget):
         pp.setMovie(movie)
         movie.start()
 
-
+        
         layout = QVBoxLayout()
         layout.addWidget(pp, 0, Qt.AlignCenter)
         window2.setLayout(layout)
@@ -153,8 +132,9 @@ class MainWindow(QStackedWidget):
         self.setCurrentWidget(window2)
 
         self.timer = QTimer()
-              
-        self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        
+        self.timer.singleShot(5500, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(6000, lambda: self.Result(righthand_number))
 
         self.timer.singleShot(10000, lambda: self.changeGif("photo/R2.gif")) 
         self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
@@ -170,46 +150,50 @@ class MainWindow(QStackedWidget):
         print mode
         print "ems",
         print i1, i2
+        global righthand_number
+        righthand_number = randint(1, 3)
+        #lefthand_number = readbyleamotion	
         if mode == 1: #easy mode
-            rand_number = randint(1, 3)
-            if rand_number == 1:
+            if righthand_number == 1:
                 print "scissor",
                 print i1
                 my_ems_board.send(ems_command(1,i2,1000))
-            elif rand_number ==2:
+            elif righthand_number ==2:
                 print "rock",
                 print i2
                 my_ems_board.send(ems_command(1,i1,1000))
                 my_ems_board.send(ems_command(2,i1,1000))
             else:
                 pass 
-            # player hand?
-                #if player win:
-                    #self.changeGif()
-                #elif player lose:
-                    #self.changeGif()
-                #else:
-                    #self.changeGif()
-                       
         elif mode == 2: #pi camera  hard mode
-            pass
-            # player hand?
-                #if player win:
-                    #self.changeGif()
-                #elif player lose:
-                    #self.changeGif()
-                #else:
-                    #self.changeGif()
+            if lefthand_number==3:#left is paper=>ems:scissor
+                righthand_number=1
+                my_ems_board.send(ems_command(1,i2,1000))
+            else:#o.w
+                righthand_number=lefthand_number+1
+                if righthand_number==2:#ems:rock
+                    my_ems_board.send(ems_command(1,i1,1000))
+                    my_ems_board.send(ems_command(2,i1,1000))
         
-
-        
-        and_number = randint(1, 3)
-        if and_number == 1:
-            self.changeGif("photo/leftattack.gif")
-        elif and_number == 2:
-            self.changeGif("photo/rightattack.gif")
-        else:
+	#show result        
+    def Result(self,right):
+        print right
+        #left read by leamotion
+        result=right-left
+	if result==0:#peace
             self.changeGif("photo/peace.gif")
+	elif result==1 or result==-2:#ems win
+            self.changeGif("photo/rightattack.gif")
+	else:
+            self.changeGif("photo/leftattack.gif")
+        
+#        and_number = randint(1, 3)
+#        if and_number == 1:
+#            self.changeGif("photo/leftattack.gif")
+#        elif and_number == 2:
+#            self.changeGif("photo/rightattack.gif")
+#        else:
+#            self.changeGif("photo/peace.gif")
 
         
     def changeGif(self, gifname):
