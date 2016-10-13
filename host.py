@@ -3,18 +3,23 @@ import socket
 import threading
 
 class SocketHandler(asyncore.dispatcher_with_send):
-    def __init__(self):
-        self.listeners = []
+    # def __init__ 
+    listeners = []
+    # def __init__(self, socket):
+        # super( Hand_Pose, self).__init__()
+        # super.__init__(socket)
+        # self.listeners = []
     def handle_read(self):
         data = self.recv(8192)
-        for listening in self.listeners:
+        print data
+        for listening in listeners:
             listening(data)
         #     # self.send(data)
     def sendMessages(self, messages):
         self.send(messages)
 
     def register(self, listener):
-        self.listeners.append(listener)
+        listeners.append(listener)
         
 
 class MyServer(asyncore.dispatcher):
@@ -55,7 +60,8 @@ class Host():
         # and here I also start the asyncore loop, listening for SMTP connection, within a thread
         # timeout parameter is important, otherwise code will block 30 seconds after the smtp channel has been closed
         
-        self.thread.start()  
+        self.thread.start() 
+        print 'start server' 
 
     def stop(self):
         """Stop listening now to port 25"""
@@ -73,11 +79,11 @@ class Host():
 x = Host()
 try:
    
-   x.start()
-   while True:
-    n = raw_input("\n\nSend?: ")
-    x.sendMessages(n)
-    pass
+    x.start()
+    while True:
+        n = raw_input("\n\nSend?: ")
+        x.sendMessages(n)
+    
 finally:
     x.stop()
  # h.sendMessages('123456')
