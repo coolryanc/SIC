@@ -6,7 +6,7 @@ from pyEMS import openEMSstim
 from pyEMS.EMSCommand import ems_command
 from pyEMS import openEMSstim
 from random import randint 
-
+from host import Host
 
 
 my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
@@ -87,6 +87,8 @@ class MainWindow(QStackedWidget):
         pic.setPixmap(QPixmap("photo/title4.jpg")) 
         window = QWidget()
 
+        host.register(self.receive)
+
         go = HoverButton1(window,"EASY","font-size:20px;background-color:#5F5C5C;\
                           color:#E4E4E4","font-size:25px;background-color:#3c393a;color:#ffffff")
 
@@ -122,29 +124,44 @@ class MainWindow(QStackedWidget):
         window.setLayout(layout)
         self.addWidget(window)
         self.setCurrentWidget(window)
-        
+    def changeGif(self, gifname):
+        global movie
+        movie.stop()
+        movie = QMovie(gifname)
+        #print "fuckkkkkk"
+        pp.setMovie(movie)
+        movie.start()
+    
 
+    #def set_left(self):
+        #self.timer.singleShot(1000, lambda: self.changeGif("photo/R2.gif")) 
+        #self.changeGif("photo/leftattack.gif")
+    #def set_right(self):
+        #self.changeGif("photo/rightattack.gif")
+    #def set_peace(self):
+        #self.changeGif("photo/peace.gif")
     def ReadyStart(self, mode):
-        print "Mode:",
+        global count
+        count=1
+        global oppp
+        oppp=mode
+        print "Mode:"
         print mode
         print self.idensity1
         print self.idensity2
+        msgtopi=str(self.idensity1)+str(self.idensity2)+str(mode)
+        host.sendMessages(msgtopi)
         pic.hide()
         global window2
         window2 = QWidget()
         window2.setStyleSheet("background-color:white")
-
-
-
-  
         global pp
         pp = QLabel()
         global movie 
         movie = QMovie("photo/R1.gif")
         pp.setMovie(movie)
         movie.start()
-
-
+        self.timer.singleShot(3000, lambda: self.changeGif("stand.gif"))
         layout = QVBoxLayout()
         layout.addWidget(pp, 0, Qt.AlignCenter)
         window2.setLayout(layout)
@@ -154,19 +171,43 @@ class MainWindow(QStackedWidget):
 
         self.timer = QTimer()
               
-        self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+    def receive(self,data):
+        choice=int(data)
+        global count
+        global oppp
+        if choice == 1:
+            self.changeGif("photo/leftattack.gif")
+            count+=1
+            ss=str(count)
+            self.timer.singleShot(3000, lambda: self.changeGif("photo/R"+ss+".gif"))
+        elif choice == 2:
+            self.changeGif("photo/rightattack.gif")
+            count+=1
+            ss=str(count)
+            self.timer.singleShot(3000, lambda: self.changeGif("photo/R"+ss+".gif"))
+        elif choice == 3:
+            self.changeGif("photo/peace.gif")
+            count+=1
+            ss=str(count)
+            self.timer.singleShot(3000, lambda: self.changeGif("photo/R"+ss+".gif"))
+        if count==4:
+            self.timer.singleShot(3000, lambda: self.finishPage(oppp))
+              
+        #self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
-        self.timer.singleShot(10000, lambda: self.changeGif("photo/R2.gif")) 
-        self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
-        self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
-        self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        #self.timer.singleShot(10000, lambda: self.changeGif("photo/R2.gif")) 
+        #self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+
+        #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
+        #self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
 
-        self.timer.singleShot(30000, lambda: self.finishPage(mode))
+        #self.timer.singleShot(30000, lambda: self.finishPage(mode))
 
 
     def EMS(self, i1, i2, mode):
+        count=1
         print mode
         print "ems",
         print i1, i2
@@ -180,47 +221,8 @@ class MainWindow(QStackedWidget):
                 print "rock",
                 print i2
                 my_ems_board.send(ems_command(1,i1,1000))
-                my_ems_board.send(ems_command(2,i1,1000))
-            else:
-                pass 
-            # player hand?
-                #if player win:
-                    #self.changeGif()
-                #elif player lose:
-                    #self.changeGif()
-                #else:
-                    #self.changeGif()
-                       
-        elif mode == 2: #pi camera  hard mode
-            pass
-            # player hand?
-                #if player win:
-                    #self.changeGif()
-                #elif player lose:
-                    #self.changeGif()
-                #else:
-                    #self.changeGif()
+                my_ems_board.send(ems_command(2,i1,1000))   
         
-
-        
-        and_number = randint(1, 3)
-        if and_number == 1:
-            self.changeGif("photo/leftattack.gif")
-        elif and_number == 2:
-            self.changeGif("photo/rightattack.gif")
-        else:
-            self.changeGif("photo/peace.gif")
-
-        
-    def changeGif(self, gifname):
-        global movie
-        movie.stop()
-        movie = QMovie(gifname)
-        pp.setMovie(movie)
-        movie.start()
-        
-        
-
 
     def finishPage(self, mode):
         self.removeWidget(window2)
@@ -262,6 +264,8 @@ class MainWindow(QStackedWidget):
 
 
     def restart(self, mode):
+        global count
+        count=1
         self.removeWidget(window3)
         self.addWidget(window2)
         self.setCurrentWidget(window2)
@@ -271,7 +275,9 @@ class MainWindow(QStackedWidget):
         movie = QMovie("photo/R1.gif")
         pp.setMovie(movie)
         movie.start()
-
+        
+        self.timer=Qtimer        
+        """
         self.timer = QTimer()
               
         self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
@@ -284,9 +290,9 @@ class MainWindow(QStackedWidget):
 
 
         self.timer.singleShot(30000, lambda: self.finishPage(mode))
-
         
-        
+        """
+    
 
     def gotohome(self):
         self.idensity1 = 10
@@ -398,20 +404,27 @@ class MainWindow(QStackedWidget):
 
     def RockTest(self):
         print self.idensity1
-        my_ems_board.send(ems_command(1,self.idensity1,1000))
-        my_ems_board.send(ems_command(2,self.idensity1,1000))
+        msgtopi=str(self.idensity1)+str(self.idensity2)
+        host.sendMessages(msgtopi)
+
 
     def ScissorTest(self):
         print self.idensity2
-        my_ems_board.send(ems_command(1,self.idensity2,1000))
+        msgtopi=str(self.idensity1)+str(self.idensity2)
+        host.sendMessages(msgtopi)
 
     
 
 
  
 if __name__ == '__main__':
+    
+    global host
+    host = Host()
     app = QApplication([])
     window = MainWindow()
+
+    host.start()
     window.show()
     app.exec_()
 
