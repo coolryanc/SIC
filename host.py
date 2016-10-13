@@ -12,7 +12,7 @@ class SocketHandler(asyncore.dispatcher_with_send):
     def handle_read(self):
         data = self.recv(8192)
         print data
-        for listening in listeners:
+        for listening in self.listeners:
             listening(data)
         #     # self.send(data)
     def sendMessages(self, messages):
