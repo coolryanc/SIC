@@ -282,6 +282,12 @@ class MainWindow(QStackedWidget):
       
         else:
             self.changeGif(movie,"photo/peace.gif")
+            global rightlife
+            bloodright.playAN(rightlife-1)  
+            rightlife -=1 
+            global leftlife
+            bloodleft.playAN(leftlife-1) 
+            leftlife -=1
 
         
 
@@ -336,13 +342,25 @@ class MainWindow(QStackedWidget):
         pp.setMovie(movie)
         movie.start()
 
+        global leftlife
+        global rightlife
+
+        print "restart:", leftlife, rightlife
+
+
+        leftlife = 3
+        rightlife = 3
+
+        print "restart:~~~", leftlife, rightlife
+
+
         bloodleft.reset()
         bloodright.reset()
 
 
 
         self.timer = QTimer()
-              
+        roundlabel.setText("")      
         self.timer.singleShot(3000, lambda: self.Roundnumber("ROUND1"))     
         self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
@@ -399,7 +417,7 @@ class MainWindow(QStackedWidget):
 
         global Sslider
         Sslider=QSlider(Qt.Horizontal)
-        #Sslider.setStyleSheet(" border: 2px solid grey; background: #32CC99;height: 15px;margin: 0px 20px 0 20px;")
+        Sslider.setStyleSheet("QSlider::handle:horizontal {background-color:#3c393a;};")
         Sslider.setMinimum(10)
         Sslider.setMaximum(100)
         Sslider.setTickPosition(QSlider.TicksBelow)
@@ -408,6 +426,7 @@ class MainWindow(QStackedWidget):
 
         global Rslider
         Rslider=QSlider(Qt.Horizontal)
+        Rslider.setStyleSheet("QSlider::handle:horizontal {background-color:#3c393a;}")
         Rslider.setMinimum(10)
         Rslider.setMaximum(100)
         Rslider.setTickPosition(QSlider.TicksBelow)
