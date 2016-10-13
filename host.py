@@ -7,8 +7,8 @@ class SocketHandler(asyncore.dispatcher_with_send):
         self.listeners = []
     def handle_read(self):
         data = self.recv(8192)
-        for listener in self.listeners:
-            listener.receice(data)
+        for listening in self.listeners:
+            listening(data)
         #     # self.send(data)
     def sendMessages(self, messages):
         self.send(messages)
@@ -70,16 +70,16 @@ class Host():
     def register(self, listener):
         self.server.register(listener)
 
-# x = Host()
-# try:
+x = Host()
+try:
    
-#    x.start()
-#    while True:
-#     n = raw_input("\n\nSend?: ")
-#     x.sendMessages(n)
-#     pass
-# finally:
-#     x.stop()
+   x.start()
+   while True:
+    n = raw_input("\n\nSend?: ")
+    x.sendMessages(n)
+    pass
+finally:
+    x.stop()
  # h.sendMessages('123456')
 # 
 
