@@ -9,20 +9,20 @@ from random import randint
 
 
 
-# my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
-bluetoothSerial = serial.Serial("/dev/tty.Bluetooth-Incoming-Port", 9600 )
+my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
+
 """
 class GifImage(QLabel):
     def __init__(self, *args):
         super(GifImage, self).__init__()
         print args[1]
         global movie 
-        self.movie = QMovie(args[1])
+        stop()
+        #self.setVisibleself.movie = QMovie(args[1])
         self.setMovie(self.movie)
         self.movie.start()
-        #self.movie.stop()
-        #self.setVisible(False)
-        self.timer = Q`Timer()
+        #self.movie.(False)
+        self.timer = QTimer()
         self.timer.singleShot(int(args[2]),self.clockdown)
 
     
@@ -44,10 +44,10 @@ class HoverButton(QPushButton):
         self.setIcon(QIcon(args[1]))
     
     def enterEvent(self,event):
-        print("Enter")
+        #print("Enter")
         self.setIcon(QIcon(self.ph2))
     def leaveEvent(self,event):
-        print("Leave")
+        #print("Leave")
         self.setIcon(QIcon(self.ph1))
 
 class HoverButton1(QPushButton):
@@ -61,10 +61,10 @@ class HoverButton1(QPushButton):
         self.setStyleSheet(self.ph1)
     
     def enterEvent(self,event):
-        print("Enter")
+        #print("Enter")
         self.setStyleSheet(self.ph2)
     def leaveEvent(self,event):
-        print("Leave")
+        #print("Leave")
         self.setStyleSheet(self.ph1)
 
 
@@ -134,33 +134,32 @@ class MainWindow(QStackedWidget):
         window2 = QWidget()
         window2.setStyleSheet("background-color:white")
 
+
+
   
         global pp
-        #pp = GifImage(window2, "photo/stand.gif", 6000 ,"HI")
         pp = QLabel()
         global movie 
-        movie = QMovie("photo/321.gif")
+        movie = QMovie("photo/R1.gif")
         pp.setMovie(movie)
         movie.start()
 
 
         layout = QVBoxLayout()
-        layout.addWidget(pp)
+        layout.addWidget(pp, 0, Qt.AlignCenter)
         window2.setLayout(layout)
         
         self.addWidget(window2)
         self.setCurrentWidget(window2)
 
         self.timer = QTimer()
-        self.timer.singleShot(3000, lambda: self.changeGif("photo/stand.gif"))      
+              
         self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
-        self.timer.singleShot(9000, lambda: self.changeGif("photo/321.gif")) 
-        self.timer.singleShot(12000, lambda: self.changeGif("photo/stand.gif")) 
+        self.timer.singleShot(10000, lambda: self.changeGif("photo/R2.gif")) 
         self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
-        self.timer.singleShot(18000, lambda: self.changeGif("photo/321.gif")) 
-        self.timer.singleShot(21000, lambda: self.changeGif("photo/stand.gif")) 
+        self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
         self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
 
@@ -176,15 +175,12 @@ class MainWindow(QStackedWidget):
             if rand_number == 1:
                 print "scissor",
                 print i1
-                # bluetoothSerial.send(ems_command(1,i2,1000))
-                bluetoothSerial.write(ems_command(1,100,2000))
+                my_ems_board.send(ems_command(1,i2,1000))
             elif rand_number ==2:
                 print "rock",
                 print i2
-                bluetoothSerial.write(ems_command(1,100,1000))
-                bluetoothSerial.write(ems_command(2,100,2000))
-                
-                # bluetoothSerial.send(ems_command(2,i1,1000))
+                my_ems_board.send(ems_command(1,i1,1000))
+                my_ems_board.send(ems_command(2,i1,1000))
             else:
                 pass 
             # player hand?
@@ -195,7 +191,7 @@ class MainWindow(QStackedWidget):
                 #else:
                     #self.changeGif()
                        
-        elif mode == 2: #pi camera
+        elif mode == 2: #pi camera  hard mode
             pass
             # player hand?
                 #if player win:
@@ -204,6 +200,8 @@ class MainWindow(QStackedWidget):
                     #self.changeGif()
                 #else:
                     #self.changeGif()
+        
+
         
         and_number = randint(1, 3)
         if and_number == 1:
@@ -228,17 +226,40 @@ class MainWindow(QStackedWidget):
         self.removeWidget(window2)
         global window3
         window3 = QWidget()
-        layout = QVBoxLayout()
-        finish = QPushButton("Finish")
-        finish.clicked.connect(self.gotohome)
-        tryagain = QPushButton("tryagain")
-        tryagain.clicked.connect(lambda: self.restart(mode))
+        window3.setStyleSheet("background-color:#fdfbed")
+        pic1 = QLabel()
+        pic1.setPixmap(QPixmap("photo/finishpage.jpg"))
+        over = QLabel("GAME OVER")
+        over.setFont(QFont("SWLINK",30,QFont.Bold))
 
-        layout.addWidget(tryagain)
-        layout.addWidget(finish)
+
+        layout = QVBoxLayout()
+
+        finish = HoverButton1(window3,"FINISH","font-size:20px;background-color:#5F5C5C;\
+                          color:#E4E4E4","font-size:25px;background-color:#3c393a;color:#ffffff")
+        finish.clicked.connect(self.gotohome)
+        tryagain = HoverButton1(window3,"TRY AGAIN","font-size:20px;background-color:#5F5C5C;\
+                          color:#E4E4E4","font-size:25px;background-color:#3c393a;color:#ffffff")
+        tryagain.clicked.connect(lambda: self.restart(mode))
+        
+        h1 = QHBoxLayout()
+        h1.addWidget(tryagain,0,Qt.AlignCenter)
+        h2 = QHBoxLayout()
+        h2.addWidget(finish,0,Qt.AlignCenter)
+
+
+        
+        layout.addWidget(pic1, 0, Qt.AlignHCenter)
+        layout.addWidget(over, 0, Qt.AlignCenter)
+        layout.addStretch()
+        layout.addLayout(h1)
+        layout.addLayout(h2)
+        layout.addStretch()
         window3.setLayout(layout)
         self.addWidget(window3)
         self.setCurrentWidget(window3)
+
+
 
     def restart(self, mode):
         self.removeWidget(window3)
@@ -247,21 +268,20 @@ class MainWindow(QStackedWidget):
 
         global movie
         movie.stop()
-        movie = QMovie("photo/321.gif")
+        movie = QMovie("photo/R1.gif")
         pp.setMovie(movie)
         movie.start()
 
         self.timer = QTimer()
-        self.timer.singleShot(3000, lambda: self.changeGif("photo/stand.gif"))      
+              
         self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
-        self.timer.singleShot(9000, lambda: self.changeGif("photo/321.gif")) 
-        self.timer.singleShot(12000, lambda: self.changeGif("photo/stand.gif")) 
+        self.timer.singleShot(10000, lambda: self.changeGif("photo/R2.gif")) 
         self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
-        self.timer.singleShot(18000, lambda: self.changeGif("photo/321.gif")) 
-        self.timer.singleShot(21000, lambda: self.changeGif("photo/stand.gif")) 
+        self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
         self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+
 
         self.timer.singleShot(30000, lambda: self.finishPage(mode))
 
@@ -314,15 +334,11 @@ class MainWindow(QStackedWidget):
         Rslider.setMaximum(100)
         Rslider.setTickPosition(QSlider.TicksBelow)
         Rslider.setTickInterval(10)
-        Rslider.valueChanged.connect(self.change_level2)
-
-        
+        Rslider.valueChanged.connect(self.change_level2)        
  
         returnButton = HoverButton(window1,"photo/back.png","photo/back2.png")
         returnButton.clicked.connect(self.back)
-
-
-        
+       
         Sbottun = HoverButton(window1,"photo/bolt.png","photo/bolt1.png")
         Sbottun.clicked.connect(self.RockTest)
         Sbottun.setIconSize(QSize(40,40))
@@ -382,12 +398,12 @@ class MainWindow(QStackedWidget):
 
     def RockTest(self):
         print self.idensity1
-        bluetoothSerial.write(ems_command(1,self.idensity1,1000))
-        bluetoothSerial.write(ems_command(2,self.idensity1,1000))
+        my_ems_board.send(ems_command(1,self.idensity1,1000))
+        my_ems_board.send(ems_command(2,self.idensity1,1000))
 
     def ScissorTest(self):
         print self.idensity2
-        bluetoothSerial.write(ems_command(1,self.idensity2,1000))
+        my_ems_board.send(ems_command(1,self.idensity2,1000))
 
     
 
