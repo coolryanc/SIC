@@ -6,8 +6,8 @@ from pyEMS import openEMSstim
 from pyEMS.EMSCommand import ems_command
 from pyEMS import openEMSstim
 from random import randint 
-
-
+sys.path.append("../Leapmotion-GesturePredicted")
+import Sample
 
 my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
 
