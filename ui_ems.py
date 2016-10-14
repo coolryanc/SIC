@@ -6,7 +6,10 @@ from pyEMS import openEMSstim
 from pyEMS.EMSCommand import ems_command
 from pyEMS import openEMSstim
 from random import randint 
-
+sys.path.append("../Leapmotion-GesturePredicted")
+import Sample
+from Sample import predict
+from Sample import getAnswer
 
 
 my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
@@ -152,6 +155,8 @@ class MainWindow(QStackedWidget):
         window2 = QWidget()
         window2.setStyleSheet("background-color:white")
 
+        predict()
+
         global leftlife
         leftlife = 3
         global rightlife
@@ -231,8 +236,8 @@ class MainWindow(QStackedWidget):
         print "ems",
         print i1, i2
         righthand_number = randint(1, 3)
-        lefthand_number = randint(1, 3)
-        #lefthand_number = readbyleamotion  
+        # lefthand_number = randint(1, 3)
+        lefthand_number = getAnswer()  
         if mode == 1: #easy mode
             if righthand_number == 1:
                 print "scissor",
@@ -260,7 +265,7 @@ class MainWindow(QStackedWidget):
     #show result        
     def Result(self,right):
         print right
-        left = randint(1, 3)
+        left = getAnswer()
         #left read by leamotion
         result=right-left
         if result==0:#peace
