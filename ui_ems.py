@@ -32,7 +32,7 @@ class GifImage(QLabel):
         self.life = nowlife
         self.timer = QTimer()
         self.timer.singleShot(self.timedelay,self.start)
-        self.timer.singleShot(self.timedelay+1200,self.cc)
+        self.timer.singleShot(self.timedelay+1000,self.cc)
 
     def cc(self):
         if self.life == 2:
@@ -100,7 +100,7 @@ class MainWindow(QStackedWidget):
         global idensity2
         self.idensity2 = 10
 
-        predict()
+    
 
         pic = QLabel(self)
         pic.setScaledContents(True)
@@ -155,6 +155,7 @@ class MainWindow(QStackedWidget):
         window2 = QWidget()
         window2.setStyleSheet("background-color:white")
 
+        predict()
 
         global leftlife
         leftlife = 3
@@ -185,17 +186,6 @@ class MainWindow(QStackedWidget):
         ho.addWidget(bloodleft, 0, Qt.AlignCenter)
         ho.addWidget(bloodright, 0, Qt.AlignCenter)  
 
-        global leftplayer_Ges
-        global rightplayer_Ges
-        leftplayer_Ges = QLabel("")
-        rightplayer_Ges = QLabel("")
-        leftplayer_Ges.setFont(QFont("SWLINK",30,QFont.Bold))
-        rightplayer_Ges.setFont(QFont("SWLINK",30,QFont.Bold))
-        h1 = QHBoxLayout()
-        h1.addWidget(leftplayer_Ges, 0, Qt.AlignCenter)
-        h1.addWidget(rightplayer_Ges, 0, Qt.AlignCenter)
-
-
 
 
         layout = QVBoxLayout()
@@ -203,7 +193,6 @@ class MainWindow(QStackedWidget):
         layout.addLayout(til)
         layout.addStretch()
         layout.addLayout(ho)
-        layout.addLayout(h1)
         layout.addWidget(pp, 0, Qt.AlignCenter)
         layout.addStretch()
         window2.setLayout(layout)
@@ -236,8 +225,6 @@ class MainWindow(QStackedWidget):
 
     def Roundnumber(self, te):
         roundlabel.setText(te)
-        leftplayer_Ges.setText("")
-        rightplayer_Ges.setText("")
 
 
     def changeGif(self, mov, gifname):
@@ -253,10 +240,7 @@ class MainWindow(QStackedWidget):
         global righthand_number
         righthand_number = randint(1, 3)
         # lefthand_number = randint(1, 3)
-        try:
-            lefthand_number = int(getAnswer())  
-        except ValueError:
-            print "gggggggggg"
+        lefthand_number = int(getAnswer())  
         if mode == 1: #easy mode
             if righthand_number == 1:
                 print "scissor",
@@ -284,22 +268,9 @@ class MainWindow(QStackedWidget):
         
     #show result        
     def Result(self):
-        ge = ["Scissors", "Rock", "Paper"]
-        #left = int(getAnswer())
-        try:
-            left = int(getAnswer())
-        except ValueError:
-            self.changeGif(movie,"photo/stand.gif")
-
-            
-
-
+        left = int(getAnswer())
         right = righthand_number
         print right,left
-        leftplayer_Ges.setText(ge[left-1])
-        rightplayer_Ges.setText(ge[right-1])
-
-
         #left read by leamotion
         result=right-left
         print 'fuckkkkkkk' + str(result)
@@ -367,9 +338,6 @@ class MainWindow(QStackedWidget):
         self.addWidget(window2)
         self.setCurrentWidget(window2)
 
-        leftplayer_Ges.setText("")
-        rightplayer_Ges.setText("")
-
         global movie
         movie.stop()
         movie = QMovie("photo/R1.gif")
@@ -396,25 +364,21 @@ class MainWindow(QStackedWidget):
         self.timer = QTimer()
         roundlabel.setText("")      
         self.timer.singleShot(3000, lambda: self.Roundnumber("ROUND1"))     
-        self.timer.singleShot(5900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(6000, lambda: self.Result())
+        self.timer.singleShot(4900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
-        self.timer.singleShot(9000, lambda: self.Roundnumber(""))    
-        self.timer.singleShot(9000, lambda: self.changeGif(movie,"photo/R2.gif")) 
-        self.timer.singleShot(12000, lambda: self.Roundnumber("ROUND2"))   
-        self.timer.singleShot(14900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(15000, lambda: self.Result())
+        self.timer.singleShot(8000, lambda: self.Roundnumber(""))    
+        self.timer.singleShot(8000, lambda: self.changeGif(movie,"photo/R2.gif")) 
+        self.timer.singleShot(11000, lambda: self.Roundnumber("ROUND2"))   
+        self.timer.singleShot(12900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
         #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
         #self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         
-        self.timer.singleShot(18000, lambda: self.Roundnumber(""))    
-        self.timer.singleShot(18000, lambda: self.changeGif(movie,"photo/R3.gif")) 
-        self.timer.singleShot(21000, lambda: self.Roundnumber("ROUND3"))   
-        self.timer.singleShot(23900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(24000, lambda: self.Result())
-
+        self.timer.singleShot(17000, lambda: self.Roundnumber(""))    
+        self.timer.singleShot(17000, lambda: self.changeGif(movie,"photo/R3.gif")) 
+        self.timer.singleShot(20000, lambda: self.Roundnumber("ROUND3"))   
+        self.timer.singleShot(21900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
 
 
         self.timer.singleShot(30000, lambda: self.finishPage(mode))
