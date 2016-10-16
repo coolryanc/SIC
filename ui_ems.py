@@ -7,6 +7,7 @@ from pyEMS.EMSCommand import ems_command
 from pyEMS import openEMSstim
 from random import randint 
 import predict
+
 from predict import predict
 from predict import getAnswer
 # sys.path.append("../Leapmotion-GesturePredicted")
@@ -260,10 +261,17 @@ class MainWindow(QStackedWidget):
         global righthand_number
         righthand_number = randint(1, 3)
         # lefthand_number = randint(1, 3)
-        try:
-            lefthand_number = int(getAnswer())  
-        except ValueError:
-            print "gggggggggg"
+        # try:
+        #     lefthand_number = int(getAnswer())  
+        # except ValueError:
+        #     print "gggggggggg"
+        #   
+        lefthand_number = int(getAnswer())
+        if lefthand_number == 0:
+            print "no hand!"
+
+        
+
         if mode == 1: #easy mode
             if righthand_number == 1:
                 print "scissor",
@@ -293,41 +301,43 @@ class MainWindow(QStackedWidget):
     def Result(self):
         ge = ["Scissors", "Rock", "Paper"]
         #left = int(getAnswer())
-        try:
-            left = int(getAnswer())
-        except ValueError:
-            self.changeGif(movie,"photo/stand.gif")
+        # try:
+        #     left = int(getAnswer())
+        # except ValueError:
+        #     self.changeGif(movie,"photo/stand.gif")
+        left = int(getAnswer())
+        print "tttttttttttt"
+        print left
+        print "tttttttttttt"
+        if left == 0:
+            self.changeGif(movie, "photo/stand.gif")
 
-            
-
-
-        right = righthand_number
-        print right,left
-        leftplayer_Ges.setText(ge[left-1])
-        rightplayer_Ges.setText(ge[right-1])
-
-
-        #left read by leamotion
-        result=right-left
-        #print 'fuckkkkkkk' + str(result)
-        if result==0:#peace
-            self.changeGif(movie,"photo/peace.gif")
-            global rightlife
-            bloodright.playAN(rightlife-1)  
-            rightlife -=1 
-            global leftlife
-            bloodleft.playAN(leftlife-1) 
-            leftlife -=1
-        elif result==1 or result==-2:#ems win
-            self.changeGif(movie,"photo/rightattack.gif")
-            # global leftlife
-            bloodleft.playAN(leftlife-1) 
-            leftlife -=1
-        else:
-            self.changeGif(movie,"photo/leftattack.gif") 
-            # global rightlife
-            bloodright.playAN(rightlife-1)  
-            rightlife -=1        
+        else: 
+            right = righthand_number
+            print right,left
+            leftplayer_Ges.setText(ge[left-1])
+            rightplayer_Ges.setText(ge[right-1])
+            #left read by leamotion
+            result=right-left
+            #print 'fuckkkkkkk' + str(result)
+            if result==0:#peace
+                self.changeGif(movie,"photo/peace.gif")
+                global rightlife
+                bloodright.playAN(rightlife-1)  
+                rightlife -=1 
+                global leftlife
+                bloodleft.playAN(leftlife-1) 
+                leftlife -=1
+            elif result==1 or result==-2:#ems win
+                self.changeGif(movie,"photo/rightattack.gif")
+                # global leftlife
+                bloodleft.playAN(leftlife-1) 
+                leftlife -=1
+            else:
+                self.changeGif(movie,"photo/leftattack.gif") 
+                # global rightlife
+                bloodright.playAN(rightlife-1)  
+                rightlife -=1        
 
 
     def finishPage(self, mode):
