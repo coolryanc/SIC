@@ -68,7 +68,6 @@ class HoverButton(QPushButton):
     def enterEvent(self,event):
         #print("Enter")
         self.setIcon(QIcon(self.ph2))
-        s.play()
     def leaveEvent(self,event):
         #print("Leave")
         self.setIcon(QIcon(self.ph1))
@@ -243,6 +242,9 @@ class MainWindow(QStackedWidget):
         roundlabel.setText(te)
         leftplayer_Ges.setText("")
         rightplayer_Ges.setText("")
+        print "--------------------------------"
+        print getAnswer()
+        print "--------------------------------"
 
 
     def changeGif(self, mov, gifname):
@@ -265,11 +267,11 @@ class MainWindow(QStackedWidget):
         if mode == 1: #easy mode
             if righthand_number == 1:
                 print "scissor",
-                print i1
+                #print i1
                 my_ems_board.send(ems_command(1,i2,1000))
             elif righthand_number ==2:
                 print "rock",
-                print i2
+                #print i2
                 my_ems_board.send(ems_command(1,i1,1000))
                 my_ems_board.send(ems_command(2,i1,1000))
             else:
@@ -307,7 +309,7 @@ class MainWindow(QStackedWidget):
 
         #left read by leamotion
         result=right-left
-        print 'fuckkkkkkk' + str(result)
+        #print 'fuckkkkkkk' + str(result)
         if result==0:#peace
             self.changeGif(movie,"photo/peace.gif")
             global rightlife
@@ -538,12 +540,15 @@ class MainWindow(QStackedWidget):
 
     def RockTest(self):
         print self.idensity1
-        my_ems_board.send(ems_command(1,self.idensity1,1000))
-        my_ems_board.send(ems_command(2,self.idensity1,1000))
+        my_ems_board.send(ems_command(1,self.idensity1,500))
+        self.timer = QTimer()
+        self.timer.singleShot(100, lambda: self.ScissorTest())  
+        #my_ems_board.send(ems_command(2,self.idensity1,500))
+
 
     def ScissorTest(self):
         print self.idensity2
-        my_ems_board.send(ems_command(1,self.idensity2,1000))
+        my_ems_board.send(ems_command(2,self.idensity2,500))
 
     
 
