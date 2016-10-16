@@ -189,6 +189,17 @@ class MainWindow(QStackedWidget):
         global bloodright
         bloodleft = GifImage(window2, "photo/full.gif",1600,2)
         bloodright = GifImage(window2, "photo/full.gif",1600,3)
+
+        global leftplayer_Ges
+        global rightplayer_Ges
+        leftplayer_Ges = QLabel("")
+        rightplayer_Ges = QLabel("")
+        leftplayer_Ges.setFont(QFont("SWLINK",30,QFont.Bold))
+        rightplayer_Ges.setFont(QFont("SWLINK",30,QFont.Bold))
+        h1 = QHBoxLayout()
+        h1.addWidget(leftplayer_Ges, 0, Qt.AlignCenter)
+        h1.addWidget(rightplayer_Ges, 0, Qt.AlignCenter)
+
         #self.timer.singleShot(3000, lambda: self.changeGif("stand.gif"))
         self.timer.singleShot(7500,self.pleasesend)
         ho = QHBoxLayout()
@@ -199,6 +210,7 @@ class MainWindow(QStackedWidget):
         layout.addLayout(til)
         layout.addStretch()
         layout.addLayout(ho)
+        layout.addLayout(h1)
         layout.addWidget(pp, 0, Qt.AlignCenter)
         layout.addStretch()
         window2.setLayout(layout)
@@ -209,6 +221,7 @@ class MainWindow(QStackedWidget):
     def pleasesend(self):
         host.sendMessages("2 start")          
     def receive(self,data):
+        #ge = ["Scissors", "Rock", "Paper"]
         choice=int(data)
         global count
         global oppp
@@ -353,14 +366,10 @@ class MainWindow(QStackedWidget):
         self.timer = QTimer()
               
         self.timer.singleShot(6000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-
         self.timer.singleShot(10000, lambda: self.changeGif("photo/R2.gif")) 
         self.timer.singleShot(15000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-
         self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
         self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-
-
         self.timer.singleShot(30000, lambda: self.finishPage(mode))
         
         """
@@ -477,6 +486,8 @@ class MainWindow(QStackedWidget):
     def RockTest(self):
         print self.idensity1
         msgtopi="3 "+str(self.idensity1)+" "+str(self.idensity2)+" 1"
+        self.timer = QTimer()
+        self.timer.singleShot(100, lambda: self.ScissorTest())
         host.sendMessages(msgtopi)
 
 
@@ -499,7 +510,3 @@ if __name__ == '__main__':
     host.start()
     window.show()
     app.exec_()
-
-
-
-
