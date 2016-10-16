@@ -31,6 +31,7 @@ class GifImage(QLabel):
   
     def start(self):
         self.movie.start() 
+        QSound.play("music/middle_kick.mp3")
     def playAN(self,nowlife):
         self.life = nowlife
         self.timer = QTimer()
@@ -40,8 +41,10 @@ class GifImage(QLabel):
     def cc(self):
         if self.life == 2:
             self.movie.setFileName("photo/full_1.gif")
+            
         elif self.life == 1:
             self.movie.setFileName("photo/full_2.gif")
+            #QSound.play("music/middle_kick.mp3")
         self.setMovie(self.movie)
         self.movie.start()
         self.movie.stop()
@@ -205,7 +208,7 @@ class MainWindow(QStackedWidget):
         h1.addWidget(leftplayer_Ges, 0, Qt.AlignCenter)
         h1.addWidget(rightplayer_Ges, 0, Qt.AlignCenter)
 
-
+        QSound.play("music/st.mp3")
 
 
         layout = QVBoxLayout()
@@ -248,6 +251,8 @@ class MainWindow(QStackedWidget):
         roundlabel.setText(te)
         leftplayer_Ges.setText("")
         rightplayer_Ges.setText("")
+        if play==0:
+            QSound.play("music/st.mp3")
         
         if play==1:
             QSound.play("music/select01.mp3")
@@ -422,6 +427,7 @@ class MainWindow(QStackedWidget):
 
         bloodleft.reset()
         bloodright.reset()
+        QSound.play("music/st.mp3")
 
 
 
