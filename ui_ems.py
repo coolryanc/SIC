@@ -109,10 +109,6 @@ class MainWindow(QStackedWidget):
         global idensity2
         self.idensity2 = 10
 
-        QSound.play("music/Uplifting Corporate Inspiring (Preview).mp3")
-
-
-
         predict()
 
         pic = QLabel(self)
