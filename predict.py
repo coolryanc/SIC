@@ -30,7 +30,7 @@ class SampleListener(Leap.Listener):
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
     state_names = ['STATE_INVALID', 'STATE_START', 'STATE_UPDATE', 'STATE_END']
     predict_buf = []
-    answer = 0
+    answer=0 
 
     def on_init(self, controller):
         print "Initialized"
@@ -86,7 +86,11 @@ class SampleListener(Leap.Listener):
 	    else: 
                 self.answer=1 
 	    print self.answer
-
+        if (frame.hands.is_empty and frame.gestures().is_empty):
+            self.answer=0
+	    print "No hand~~~~~~~~"
+    def on_focus_lost(self, controller):
+        print "Unfocused"
 
 
     def state_string(self, state):
@@ -117,6 +121,7 @@ def predict():
     global listener
     # Create a sample listener and controller
     listener = SampleListener()
+    global controller
     controller = Leap.Controller()
     # Have the sample listener receive events from the controller
     controller.add_listener(listener)
@@ -125,7 +130,7 @@ def predict():
 def getAnswer():
     global listener
     return listener.answer
-
+"""
 if __name__ == "__main__":
     global listener
     listener = SampleListener()
@@ -139,3 +144,4 @@ if __name__ == "__main__":
     finally:
         # Remove the sample listener when done
         controller.remove_listener(listener)
+"""
