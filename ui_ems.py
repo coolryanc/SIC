@@ -6,10 +6,13 @@ from pyEMS import openEMSstim
 from pyEMS.EMSCommand import ems_command
 from pyEMS import openEMSstim
 from random import randint 
-sys.path.append("../Leapmotion-GesturePredicted")
-import Sample
-from Sample import predict
-from Sample import getAnswer
+import predict
+from predict import predict
+from predict import getAnswer
+# sys.path.append("../Leapmotion-GesturePredicted")
+# import Sample
+# from Sample import predict
+# from Sample import getAnswer
 
 
 my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
@@ -32,7 +35,7 @@ class GifImage(QLabel):
         self.life = nowlife
         self.timer = QTimer()
         self.timer.singleShot(self.timedelay,self.start)
-        self.timer.singleShot(self.timedelay+1000,self.cc)
+        self.timer.singleShot(self.timedelay+1200,self.cc)
 
     def cc(self):
         if self.life == 2:
@@ -60,6 +63,7 @@ class HoverButton(QPushButton):
         self.ph1 = args[1]
         self.ph2 = args[2]
         self.setIcon(QIcon(args[1]))
+
     
     def enterEvent(self,event):
         #print("Enter")
@@ -100,7 +104,7 @@ class MainWindow(QStackedWidget):
         global idensity2
         self.idensity2 = 10
 
-    
+        predict()
 
         pic = QLabel(self)
         pic.setScaledContents(True)
@@ -155,7 +159,6 @@ class MainWindow(QStackedWidget):
         window2 = QWidget()
         window2.setStyleSheet("background-color:white")
 
-        predict()
 
         global leftlife
         leftlife = 3
@@ -186,6 +189,17 @@ class MainWindow(QStackedWidget):
         ho.addWidget(bloodleft, 0, Qt.AlignCenter)
         ho.addWidget(bloodright, 0, Qt.AlignCenter)  
 
+        global leftplayer_Ges
+        global rightplayer_Ges
+        leftplayer_Ges = QLabel("")
+        rightplayer_Ges = QLabel("")
+        leftplayer_Ges.setFont(QFont("SWLINK",30,QFont.Bold))
+        rightplayer_Ges.setFont(QFont("SWLINK",30,QFont.Bold))
+        h1 = QHBoxLayout()
+        h1.addWidget(leftplayer_Ges, 0, Qt.AlignCenter)
+        h1.addWidget(rightplayer_Ges, 0, Qt.AlignCenter)
+
+
 
 
         layout = QVBoxLayout()
@@ -193,6 +207,7 @@ class MainWindow(QStackedWidget):
         layout.addLayout(til)
         layout.addStretch()
         layout.addLayout(ho)
+        layout.addLayout(h1)
         layout.addWidget(pp, 0, Qt.AlignCenter)
         layout.addStretch()
         window2.setLayout(layout)
@@ -225,6 +240,11 @@ class MainWindow(QStackedWidget):
 
     def Roundnumber(self, te):
         roundlabel.setText(te)
+        leftplayer_Ges.setText("")
+        rightplayer_Ges.setText("")
+        print "--------------------------------"
+        print getAnswer()
+        print "--------------------------------"
 
 
     def changeGif(self, mov, gifname):
@@ -240,15 +260,18 @@ class MainWindow(QStackedWidget):
         global righthand_number
         righthand_number = randint(1, 3)
         # lefthand_number = randint(1, 3)
-        lefthand_number = int(getAnswer())  
+        try:
+            lefthand_number = int(getAnswer())  
+        except ValueError:
+            print "gggggggggg"
         if mode == 1: #easy mode
             if righthand_number == 1:
                 print "scissor",
-                print i1
+                #print i1
                 my_ems_board.send(ems_command(1,i2,1000))
             elif righthand_number ==2:
                 print "rock",
-                print i2
+                #print i2
                 my_ems_board.send(ems_command(1,i1,1000))
                 my_ems_board.send(ems_command(2,i1,1000))
             else:
@@ -268,12 +291,25 @@ class MainWindow(QStackedWidget):
         
     #show result        
     def Result(self):
-        left = int(getAnswer())
+        ge = ["Scissors", "Rock", "Paper"]
+        #left = int(getAnswer())
+        try:
+            left = int(getAnswer())
+        except ValueError:
+            self.changeGif(movie,"photo/stand.gif")
+
+            
+
+
         right = righthand_number
         print right,left
+        leftplayer_Ges.setText(ge[left-1])
+        rightplayer_Ges.setText(ge[right-1])
+
+
         #left read by leamotion
         result=right-left
-        print 'fuckkkkkkk' + str(result)
+        #print 'fuckkkkkkk' + str(result)
         if result==0:#peace
             self.changeGif(movie,"photo/peace.gif")
             global rightlife
@@ -338,6 +374,9 @@ class MainWindow(QStackedWidget):
         self.addWidget(window2)
         self.setCurrentWidget(window2)
 
+        leftplayer_Ges.setText("")
+        rightplayer_Ges.setText("")
+
         global movie
         movie.stop()
         movie = QMovie("photo/R1.gif")
@@ -364,21 +403,25 @@ class MainWindow(QStackedWidget):
         self.timer = QTimer()
         roundlabel.setText("")      
         self.timer.singleShot(3000, lambda: self.Roundnumber("ROUND1"))     
-        self.timer.singleShot(4900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(5900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(6000, lambda: self.Result())
         # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
-        self.timer.singleShot(8000, lambda: self.Roundnumber(""))    
-        self.timer.singleShot(8000, lambda: self.changeGif(movie,"photo/R2.gif")) 
-        self.timer.singleShot(11000, lambda: self.Roundnumber("ROUND2"))   
-        self.timer.singleShot(12900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(9000, lambda: self.Roundnumber(""))    
+        self.timer.singleShot(9000, lambda: self.changeGif(movie,"photo/R2.gif")) 
+        self.timer.singleShot(12000, lambda: self.Roundnumber("ROUND2"))   
+        self.timer.singleShot(14900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(15000, lambda: self.Result())
 
         #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
         #self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         
-        self.timer.singleShot(17000, lambda: self.Roundnumber(""))    
-        self.timer.singleShot(17000, lambda: self.changeGif(movie,"photo/R3.gif")) 
-        self.timer.singleShot(20000, lambda: self.Roundnumber("ROUND3"))   
-        self.timer.singleShot(21900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(18000, lambda: self.Roundnumber(""))    
+        self.timer.singleShot(18000, lambda: self.changeGif(movie,"photo/R3.gif")) 
+        self.timer.singleShot(21000, lambda: self.Roundnumber("ROUND3"))   
+        self.timer.singleShot(23900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(24000, lambda: self.Result())
+
 
 
         self.timer.singleShot(30000, lambda: self.finishPage(mode))
@@ -497,17 +540,20 @@ class MainWindow(QStackedWidget):
 
     def RockTest(self):
         print self.idensity1
-        my_ems_board.send(ems_command(1,self.idensity1,1000))
-        my_ems_board.send(ems_command(2,self.idensity1,1000))
+        my_ems_board.send(ems_command(1,self.idensity1,500))
+        self.timer = QTimer()
+        self.timer.singleShot(100, lambda: self.ScissorTest())  
+        #my_ems_board.send(ems_command(2,self.idensity1,500))
+
 
     def ScissorTest(self):
         print self.idensity2
-        my_ems_board.send(ems_command(1,self.idensity2,1000))
+        my_ems_board.send(ems_command(2,self.idensity2,500))
 
     
 
 
- 
+
 if __name__ == '__main__':
     app = QApplication([])
     window = MainWindow()

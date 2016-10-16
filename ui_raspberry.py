@@ -477,6 +477,8 @@ class MainWindow(QStackedWidget):
     def RockTest(self):
         print self.idensity1
         msgtopi="3 "+str(self.idensity1)+" "+str(self.idensity2)+" 1"
+        self.timer = QTimer()
+        self.timer.singleShot(100, lambda: self.ScissorTest())
         host.sendMessages(msgtopi)
 
 
