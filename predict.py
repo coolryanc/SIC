@@ -88,7 +88,7 @@ class SampleListener(Leap.Listener):
 	    print self.answer
         if (frame.hands.is_empty and frame.gestures().is_empty):
             self.answer=0
-	    print "No hand~~~~~~~~"
+            #print "No hand~~~~~~~~"
     def on_focus_lost(self, controller):
         print "Unfocused"
 
