@@ -11,27 +11,40 @@ from host import Host
 
 my_ems_board = openEMSstim.openEMSstim("/dev/tty.usbserial-A9WRN9D1",19200)
 
-"""
 class GifImage(QLabel):
-    def __init__(self, *args):
+    def __init__(self, *args): #gifname time life
         super(GifImage, self).__init__()
-        print args[1]
-        global movie 
-        stop()
-        #self.setVisibleself.movie = QMovie(args[1])
+        self.movie = QMovie(args[1])
         self.setMovie(self.movie)
         self.movie.start()
-        #self.movie.(False)
-        self.timer = QTimer()
-        self.timer.singleShot(int(args[2]),self.clockdown)
-
-    
-    def clockdown(self):
         self.movie.stop()
-        self.movie = QMovie("photo/leftattack.gif")
+    
+        self.timedelay = int(args[2])
+        self.life = args[3]
+
+  
+    def start(self):
+        self.movie.start() 
+    def playAN(self,nowlife):
+        self.life = nowlife
+        self.timer = QTimer()
+        self.timer.singleShot(self.timedelay,self.start)
+        self.timer.singleShot(self.timedelay+1000,self.cc)
+
+    def cc(self):
+        if self.life == 2:
+            self.movie.setFileName("photo/full_1.gif")
+        elif self.life == 1:
+            self.movie.setFileName("photo/full_2.gif")
         self.setMovie(self.movie)
         self.movie.start()
- """       
+        self.movie.stop()
+    def reset(self):
+        self.movie.setFileName("photo/full.gif")
+        self.setMovie(self.movie)
+        self.movie.start()
+        self.movie.stop()
+    
 
 class HoverButton(QPushButton):
 
@@ -82,6 +95,7 @@ class MainWindow(QStackedWidget):
         global idensity2
         self.idensity2 = 10
         pic = QLabel(self)
+        self.timer = QTimer()
         pic.setScaledContents(True)
         pic.setGeometry(0,0,1440,1000)
         pic.setPixmap(QPixmap("photo/title4.jpg")) 
@@ -131,7 +145,7 @@ class MainWindow(QStackedWidget):
         #print "fuckkkkkk"
         pp.setMovie(movie)
         movie.start()
-    
+
 
     #def set_left(self):
         #self.timer.singleShot(1000, lambda: self.changeGif("photo/R2.gif")) 
@@ -149,47 +163,91 @@ class MainWindow(QStackedWidget):
         print mode
         print self.idensity1
         print self.idensity2
-        msgtopi=str(self.idensity1)+str(self.idensity2)+str(mode)
+
+        global roundlabel
+        roundlabel = QLabel("")
+        roundlabel.setFont(QFont("SWLINK",90,QFont.Bold))
+        til = QHBoxLayout()
+        til.addWidget(roundlabel, 0, Qt.AlignCenter)
+        msgtopi="1 "+str(self.idensity1)+" "+str(self.idensity2)+" "+str(mode)
         host.sendMessages(msgtopi)
         pic.hide()
         global window2
         window2 = QWidget()
         window2.setStyleSheet("background-color:white")
+        global leftlife
+        leftlife = 3
+        global rightlife
+        rightlife = 3
         global pp
         pp = QLabel()
         global movie 
         movie = QMovie("photo/R1.gif")
         pp.setMovie(movie)
         movie.start()
-        self.timer.singleShot(3000, lambda: self.changeGif("stand.gif"))
+        global bloodleft
+        global bloodright
+        bloodleft = GifImage(window2, "photo/full.gif",1600,2)
+        bloodright = GifImage(window2, "photo/full.gif",1600,3)
+        #self.timer.singleShot(3000, lambda: self.changeGif("stand.gif"))
+        self.timer.singleShot(7500,self.pleasesend)
+        ho = QHBoxLayout()
+        ho.addWidget(bloodleft, 0, Qt.AlignCenter)
+        ho.addWidget(bloodright, 0, Qt.AlignCenter)  
         layout = QVBoxLayout()
+        layout.addStretch()
+        layout.addLayout(til)
+        layout.addStretch()
+        layout.addLayout(ho)
         layout.addWidget(pp, 0, Qt.AlignCenter)
+        layout.addStretch()
         window2.setLayout(layout)
-        
         self.addWidget(window2)
         self.setCurrentWidget(window2)
-
-        self.timer = QTimer()
-              
+    def Roundnumber(self, te):
+        roundlabel.setText(te)    
+    def pleasesend(self):
+        host.sendMessages("2 start")          
     def receive(self,data):
         choice=int(data)
         global count
         global oppp
         if choice == 1:
             self.changeGif("photo/leftattack.gif")
-            count+=1
+            global rightlife
+            bloodright.playAN(rightlife-1)  
+            rightlife -=1 
+            count+=1  
+            print count     
             ss=str(count)
             self.timer.singleShot(3000, lambda: self.changeGif("photo/R"+ss+".gif"))
+            if count!=4:
+                self.timer.singleShot(10000,self.pleasesend)
         elif choice == 2:
             self.changeGif("photo/rightattack.gif")
+            global leftlife
+            bloodleft.playAN(leftlife-1) 
+            leftlife -=1
             count+=1
+            print count
             ss=str(count)
             self.timer.singleShot(3000, lambda: self.changeGif("photo/R"+ss+".gif"))
+            if count!=4:
+                self.timer.singleShot(10000,self.pleasesend)
         elif choice == 3:
             self.changeGif("photo/peace.gif")
+            global rightlife
+            bloodright.playAN(rightlife-1)  
+            rightlife -=1 
+            global leftlife
+            bloodleft.playAN(leftlife-1) 
+            leftlife -=1
             count+=1
+            print count
             ss=str(count)
             self.timer.singleShot(3000, lambda: self.changeGif("photo/R"+ss+".gif"))
+            if count!=4:
+                self.timer.singleShot(10000,self.pleasesend)
         if count==4:
             self.timer.singleShot(3000, lambda: self.finishPage(oppp))
               
@@ -207,7 +265,7 @@ class MainWindow(QStackedWidget):
 
 
     def EMS(self, i1, i2, mode):
-        count=1
+        #countcount=1
         print mode
         print "ems",
         print i1, i2
@@ -275,8 +333,22 @@ class MainWindow(QStackedWidget):
         movie = QMovie("photo/R1.gif")
         pp.setMovie(movie)
         movie.start()
-        
-        self.timer=Qtimer        
+
+        global leftlife
+        global rightlife
+
+
+        leftlife = 3
+        rightlife = 3
+
+
+
+        bloodleft.reset()
+        bloodright.reset()
+        self.timer = QTimer()
+        print "restart:", leftlife, rightlife
+        self.timer.singleShot(7500, self.pleasesend)  
+        print "restart:~~~", leftlife, rightlife    
         """
         self.timer = QTimer()
               
@@ -404,13 +476,13 @@ class MainWindow(QStackedWidget):
 
     def RockTest(self):
         print self.idensity1
-        msgtopi=str(self.idensity1)+str(self.idensity2)
+        msgtopi="3 "+str(self.idensity1)+" "+str(self.idensity2)+" 1"
         host.sendMessages(msgtopi)
 
 
     def ScissorTest(self):
         print self.idensity2
-        msgtopi=str(self.idensity1)+str(self.idensity2)
+        msgtopi="3 "+str(self.idensity1)+" "+str(self.idensity2)+" 2"
         host.sendMessages(msgtopi)
 
     
