@@ -183,7 +183,7 @@ class MainWindow(QStackedWidget):
         global pp
         pp = QLabel()
         global movie 
-        movie = QMovie("photo/R1.gif")
+        movie = QMovie("photo/newR1.gif")
         pp.setMovie(movie)
         movie.start()
 
@@ -225,48 +225,48 @@ class MainWindow(QStackedWidget):
         self.setCurrentWidget(window2)
         self.timer = QTimer()
         self.timer.singleShot(3100, lambda: self.Roundnumber("ROUND1",1))     
-        self.timer.singleShot(5900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(6000, lambda: self.Result())
+        self.timer.singleShot(4900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(5000, lambda: self.Result())
         # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
           
-        self.timer.singleShot(9000, lambda: self.changeGif(movie,"photo/R2.gif")) 
-        self.timer.singleShot(9100, lambda: self.Roundnumber("",0))  
-        self.timer.singleShot(12000, lambda: self.Roundnumber("ROUND2",1))   
-        self.timer.singleShot(14900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(15000, lambda: self.Result())
+        self.timer.singleShot(8000, lambda: self.changeGif(movie,"photo/newR2.gif")) 
+        self.timer.singleShot(8000, lambda: self.Roundnumber("",0))  
+        self.timer.singleShot(11100, lambda: self.Roundnumber("ROUND2",1))   
+        self.timer.singleShot(12900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(13000, lambda: self.Result())
 
         #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
         #self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         
           
-        self.timer.singleShot(18000, lambda: self.changeGif(movie,"photo/R3.gif")) 
-        self.timer.singleShot(18100, lambda: self.Roundnumber("",0))  
-        self.timer.singleShot(21000, lambda: self.Roundnumber("ROUND3",1))   
-        self.timer.singleShot(23900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(24000, lambda: self.Result())
+        self.timer.singleShot(16000, lambda: self.changeGif(movie,"photo/newR3.gif")) 
+        self.timer.singleShot(16000, lambda: self.Roundnumber("",0))  
+        self.timer.singleShot(19100, lambda: self.Roundnumber("ROUND3",1))   
+        self.timer.singleShot(20900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(21000, lambda: self.Result())
 
         #self.timer.singleShot(30000, lambda: self.Result())
-        self.timer.singleShot(30000, lambda: self.finishPage(mode))
+        self.timer.singleShot(26000, lambda: self.finishPage(mode))
 
     def Roundnumber(self, te ,play):
         roundlabel.setText(te)
         leftplayer_Ges.setText("")
         rightplayer_Ges.setText("")
         if play==0:
-            QSound.play("music/st.mp3")
-        
+            QSound.play("music/st.mp3")        
         if play==1:
             QSound.play("music/select01.mp3")
             self.timer = QTimer()
-            self.timer.singleShot(1100, lambda: self.playcountSound(1))
-            self.timer.singleShot(2100, lambda: self.playcountSound(2))
+            self.timer.singleShot(666, lambda: self.playcountSound(1))
+            self.timer.singleShot(1332, lambda: self.playcountSound(2))
         
     def playcountSound(self,music):
         if music==1:
-            QSound.play("music/select01.mp3")
+            QSound.play("music/select01.mp3")      
         elif music==2:
             QSound.play("music/select02.mp3")
+      
 
 
 
@@ -291,9 +291,6 @@ class MainWindow(QStackedWidget):
         lefthand_number = int(getAnswer())
         if lefthand_number == 0:
             print "no hand!"
-
-        
-
         if mode == 1: #easy mode
             if righthand_number == 1:
                 print "scissor",
@@ -416,7 +413,7 @@ class MainWindow(QStackedWidget):
 
         global movie
         movie.stop()
-        movie = QMovie("photo/R1.gif")
+        movie = QMovie("photo/newR1.gif")
         pp.setMovie(movie)
         movie.start()
 
@@ -441,29 +438,29 @@ class MainWindow(QStackedWidget):
         self.timer = QTimer()
         roundlabel.setText("")      
         self.timer.singleShot(3100, lambda: self.Roundnumber("ROUND1",1))     
-        self.timer.singleShot(5900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(6000, lambda: self.Result())
+        self.timer.singleShot(4900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(5000, lambda: self.Result())
         # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
           
-        self.timer.singleShot(9000, lambda: self.changeGif(movie,"photo/R2.gif")) 
-        self.timer.singleShot(9100, lambda: self.Roundnumber("",0))  
-        self.timer.singleShot(12000, lambda: self.Roundnumber("ROUND2",1))   
-        self.timer.singleShot(14900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(15000, lambda: self.Result())
+        self.timer.singleShot(8000, lambda: self.changeGif(movie,"photo/newR2.gif")) 
+        self.timer.singleShot(8000, lambda: self.Roundnumber("",0))  
+        self.timer.singleShot(11100, lambda: self.Roundnumber("ROUND2",1))   
+        self.timer.singleShot(12900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(13000, lambda: self.Result())
 
         #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
         #self.timer.singleShot(24000, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         
           
-        self.timer.singleShot(18000, lambda: self.changeGif(movie,"photo/R3.gif")) 
-        self.timer.singleShot(18100, lambda: self.Roundnumber("",0))  
-        self.timer.singleShot(21000, lambda: self.Roundnumber("ROUND3",1))   
-        self.timer.singleShot(23900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
-        self.timer.singleShot(24000, lambda: self.Result())
+        self.timer.singleShot(16000, lambda: self.changeGif(movie,"photo/newR3.gif")) 
+        self.timer.singleShot(16000, lambda: self.Roundnumber("",0))  
+        self.timer.singleShot(19100, lambda: self.Roundnumber("ROUND3",1))   
+        self.timer.singleShot(20900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(21000, lambda: self.Result())
 
-
-        self.timer.singleShot(30000, lambda: self.finishPage(mode))
+        #self.timer.singleShot(30000, lambda: self.Result())
+        self.timer.singleShot(26000, lambda: self.finishPage(mode))
 
         
         
