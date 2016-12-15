@@ -225,7 +225,7 @@ class MainWindow(QStackedWidget):
         self.setCurrentWidget(window2)
         self.timer = QTimer()
         self.timer.singleShot(3100, lambda: self.Roundnumber("ROUND1",1))     
-        self.timer.singleShot(4900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(4700, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         self.timer.singleShot(5000, lambda: self.Result())
         # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
@@ -233,7 +233,7 @@ class MainWindow(QStackedWidget):
         self.timer.singleShot(8000, lambda: self.changeGif(movie,"photo/newR2.gif")) 
         self.timer.singleShot(8000, lambda: self.Roundnumber("",0))  
         self.timer.singleShot(11100, lambda: self.Roundnumber("ROUND2",1))   
-        self.timer.singleShot(12900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(12700, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         self.timer.singleShot(13000, lambda: self.Result())
 
         #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
@@ -243,7 +243,7 @@ class MainWindow(QStackedWidget):
         self.timer.singleShot(16000, lambda: self.changeGif(movie,"photo/newR3.gif")) 
         self.timer.singleShot(16000, lambda: self.Roundnumber("",0))  
         self.timer.singleShot(19100, lambda: self.Roundnumber("ROUND3",1))   
-        self.timer.singleShot(20900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(20700, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         self.timer.singleShot(21000, lambda: self.Result())
 
         #self.timer.singleShot(30000, lambda: self.Result())
@@ -295,12 +295,12 @@ class MainWindow(QStackedWidget):
             if righthand_number == 1:
                 print "scissor",
                 #print i1
-                my_ems_board.send(ems_command(1,i2,1000))
+                self.ScissorTest(5)
             elif righthand_number ==2:
                 print "rock",
                 #print i2
-                my_ems_board.send(ems_command(1,i1,1000))
-                my_ems_board.send(ems_command(2,i1,1000))
+                self.RockTest(5)
+                
             else:
                 pass 
         elif mode == 2: #pi camera  hard mode
@@ -308,13 +308,13 @@ class MainWindow(QStackedWidget):
                 righthand_number=1
                 #my_ems_board.send(ems_command(2,i2,1000))
                 # ScissorTest(self)
-                self.ScissorTest()
+                self.ScissorTest(5)
             else:#o.w
                 righthand_number=lefthand_number+1
                 if righthand_number==2:#ems:rock
                     #my_ems_board.send(ems_command(1,i1,1000))
                     #my_ems_board.send(ems_command(2,i1,1000))
-                    self.RockTest()
+                    self.RockTest(5)
                     
 
         print righthand_number,lefthand_number
@@ -338,7 +338,7 @@ class MainWindow(QStackedWidget):
 
         else: 
             right = righthand_number
-            print right,left
+            #print right,left
             leftplayer_Ges.setText(ge[left-1])
             rightplayer_Ges.setText(ge[right-1])
             #left read by leamotion
@@ -438,7 +438,7 @@ class MainWindow(QStackedWidget):
         self.timer = QTimer()
         roundlabel.setText("")      
         self.timer.singleShot(3100, lambda: self.Roundnumber("ROUND1",1))     
-        self.timer.singleShot(4900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(4700, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         self.timer.singleShot(5000, lambda: self.Result())
         # self.timer.singleShot(7000, lambda: self.changebloodGif(leftmovie,"photo/full_1.gif")) 
 
@@ -446,7 +446,7 @@ class MainWindow(QStackedWidget):
         self.timer.singleShot(8000, lambda: self.changeGif(movie,"photo/newR2.gif")) 
         self.timer.singleShot(8000, lambda: self.Roundnumber("",0))  
         self.timer.singleShot(11100, lambda: self.Roundnumber("ROUND2",1))   
-        self.timer.singleShot(12900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(12700, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         self.timer.singleShot(13000, lambda: self.Result())
 
         #self.timer.singleShot(19000, lambda: self.changeGif("photo/R3.gif")) 
@@ -456,7 +456,7 @@ class MainWindow(QStackedWidget):
         self.timer.singleShot(16000, lambda: self.changeGif(movie,"photo/newR3.gif")) 
         self.timer.singleShot(16000, lambda: self.Roundnumber("",0))  
         self.timer.singleShot(19100, lambda: self.Roundnumber("ROUND3",1))   
-        self.timer.singleShot(20900, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
+        self.timer.singleShot(20700, lambda: self.EMS(self.idensity1 , self.idensity2, mode))
         self.timer.singleShot(21000, lambda: self.Result())
 
         #self.timer.singleShot(30000, lambda: self.Result())
@@ -466,8 +466,8 @@ class MainWindow(QStackedWidget):
         
 
     def gotohome(self):
-        self.idensity1 = 10
-        self.idensity2 = 10
+        #self.idensity1 = 10
+        #self.idensity2 = 10
         self.removeWidget(window3)
         pic.show()
 
@@ -518,12 +518,12 @@ class MainWindow(QStackedWidget):
         returnButton.clicked.connect(self.back)
        
         Sbottun = HoverButton(window1,"photo/bolt.png","photo/bolt1.png")
-        Sbottun.clicked.connect(self.RockTest)
+        Sbottun.clicked.connect(lambda: self.RockTest(0))
         Sbottun.setIconSize(QSize(40,40))
 
 
         Rbottun = HoverButton(window1,"photo/bolt.png","photo/bolt1.png")
-        Rbottun.clicked.connect(self.ScissorTest)
+        Rbottun.clicked.connect(lambda: self.ScissorTest(0))
         Rbottun.setIconSize(QSize(40,40))
 
         h1 = QHBoxLayout()
@@ -574,17 +574,19 @@ class MainWindow(QStackedWidget):
         text="Idensity:"+number
         Rlabel.setText(text)
 
-    def RockTest(self):
-        print self.idensity1
-        my_ems_board.send(ems_command(1,self.idensity1,500))
+    def RockTest(self, u):
+    	print "ems------------",
+        print self.idensity1+u
+        my_ems_board.send(ems_command(1,self.idensity1+u,500))
         self.timer = QTimer()
-        self.timer.singleShot(100, lambda: self.ScissorTest())  
+        self.timer.singleShot(100, lambda: self.ScissorTest(u))  
         #my_ems_board.send(ems_command(2,self.idensity1,500))
 
 
-    def ScissorTest(self):
-        print self.idensity2
-        my_ems_board.send(ems_command(2,self.idensity2,500))
+    def ScissorTest(self, u):
+    	print "ems------------",
+        print self.idensity2+u
+        my_ems_board.send(ems_command(2,self.idensity2+u,500))
 
     
 

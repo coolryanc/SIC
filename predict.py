@@ -66,7 +66,7 @@ class SampleListener(Leap.Listener):
             # Calculate the hand's pitch, roll, and yaw angles
 	    palm=hand.palm_position
 	    width = hand.palm_width
-            print "width: %s "%(width)
+            #print "width: %s "%(width)
 
 	    thumb = hand.fingers.finger_type(Leap.Finger.TYPE_THUMB)[0].tip_position
 	    index = hand.fingers.finger_type(Leap.Finger.TYPE_INDEX)[0].tip_position
@@ -74,10 +74,10 @@ class SampleListener(Leap.Listener):
 	    thumb_length=(thumb-palm).magnitude/width
 	    index_length=(index-palm).magnitude/width
 
-            print "thumb: %s ,lenghth: %s"%(
-            thumb, thumb_length)
-            print "index: %s ,lenghth: %s"%(
-            index, index_length)
+            # print "thumb: %s ,lenghth: %s"%(
+            # thumb, thumb_length)
+            # print "index: %s ,lenghth: %s"%(
+            # index, index_length)
 	    
             if thumb_length>0.8:
 	        self.answer=3
@@ -85,7 +85,7 @@ class SampleListener(Leap.Listener):
                 self.answer=2
 	    else: 
                 self.answer=1 
-	    print self.answer
+	    # print self.answer
         if (frame.hands.is_empty and frame.gestures().is_empty):
             self.answer=0
             #print "No hand~~~~~~~~"

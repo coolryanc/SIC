@@ -1,0 +1,32 @@
+
+--Opening
+Self
+PPAP
+	-Breadboad's Advantages
+ 	-Printed Circuit's Advantages
+
+Let's combine them, combine how?
+
+First Problem -- How to interface breadboard and circuit paper?
+	-There are many frmale headers on the breadboard, and you have to make sure all of them are fully connected with circuit paper.
+	-Put on real numbers
+	-Tried Probes(Straight-forward)
+	-Compressibility Contact Spring comes to rescue
+
+Second Problem
+	-Jumper wires or Higher Complexity ?
+	-When the circuits grow more complex, you will face situations where routings bump into each other, for breadboard, you can have 3D jumper wires as solutions. But with printed circuit, we've lost that quick fix. So what do we do?
+	-Multi-layer comes to our rescue.
+
+Walkthrough with Video
+
+Explosion Graph -- bring back circuitstack layer 
+
+Deeper look at each layers of circuitstack
+
+Properties(Win Win Win)
+	-Compared with printed circuit and modules solution
+
+Future Work
+Conclusion
+
