@@ -1,3 +1,5 @@
-##UIST SIC
-#ROCK PAPER SCISSORS
+#UIST SIC
+Student Innovation Contest
+#Project
+##ROCK PAPER SCISSORS
 
