@@ -55,39 +55,45 @@ class SampleListener(Leap.Listener):
     def on_frame(self, controller):
         # Get the most recent frame and report some basic information
         frame = controller.frame()
+
+        if (frame.hands.is_empty and frame.gestures().is_empty):
+            self.answer=0
+            return;
         # Get hands
         for hand in frame.hands:
 
             handType = "Left hand" if hand.is_left else "Right hand"
+            if (!hand.is_left):
+                continue
             # Get the hand's normal vector and direction
             normal = hand.palm_normal
             direction = hand.direction
 
             # Calculate the hand's pitch, roll, and yaw angles
-	    palm=hand.palm_position
-	    width = hand.palm_width
-            #print "width: %s "%(width)
+            palm= hand.palm_position
+            width = hand.palm_width
+            print "width: %s "%(width)
+            
+            thumb = hand.fingers.finger_type(Leap.Finger.TYPE_THUMB)[0].tip_position
+            index = hand.fingers.finger_type(Leap.Finger.TYPE_INDEX)[0].tip_position
+            
+            thumb_length=(thumb-palm).magnitude/width
+            index_length=(index-palm).magnitude/width
 
-	    thumb = hand.fingers.finger_type(Leap.Finger.TYPE_THUMB)[0].tip_position
-	    index = hand.fingers.finger_type(Leap.Finger.TYPE_INDEX)[0].tip_position
-
-	    thumb_length=(thumb-palm).magnitude/width
-	    index_length=(index-palm).magnitude/width
-
-            # print "thumb: %s ,lenghth: %s"%(
-            # thumb, thumb_length)
-            # print "index: %s ,lenghth: %s"%(
-            # index, index_length)
-	    
-            if thumb_length>0.8:
-	        self.answer=3
-	    elif index_length<0.7:
-                self.answer=2
-	    else: 
-                self.answer=1 
-	    # print self.answer
-        if (frame.hands.is_empty and frame.gestures().is_empty):
-            self.answer=0
+            print "thumb: %s ,lenghth: %s"%(
+            thumb, thumb_length)
+            print "index: %s ,lenghth: %s"%(
+            index, index_length)
+        
+            if thumb_length>1:
+                self.answer=3
+            elif index_length<0.9:
+                    self.answer=2
+            else: 
+                    self.answer=1 
+            
+            print self.answer
+        
             #print "No hand~~~~~~~~"
     def on_focus_lost(self, controller):
         print "Unfocused"
@@ -130,7 +136,7 @@ def predict():
 def getAnswer():
     global listener
     return listener.answer
-"""
+
 if __name__ == "__main__":
     global listener
     listener = SampleListener()
@@ -144,4 +150,4 @@ if __name__ == "__main__":
     finally:
         # Remove the sample listener when done
         controller.remove_listener(listener)
-"""
+
